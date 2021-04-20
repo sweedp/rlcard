@@ -95,6 +95,7 @@ def get_landlord_score(current_hand):
     Returns:
         int: score
     '''
+
     score_map = {'A': 1, '2': 2, 'B': 3, 'R': 4}
     score = 0
     # rocket

@@ -20,12 +20,12 @@ class DoudizhuEnv(Env):
         self._CARD_RANK_STR = CARD_RANK_STR
         self._ACTION_LIST = ACTION_LIST
         self._ACTION_SPACE = ACTION_SPACE
-        
+
         self.name = 'doudizhu'
         self.game = Game()
         super().__init__(config)
         self.state_shape = [6, 5, 15]
-
+        
     def _extract_state(self, state):
         ''' Encode state
 

@@ -387,8 +387,13 @@ def tournament(env, num):
     '''
     payoffs = [0 for _ in range(env.player_num)]
     counter = 0
+    peasant_wins_total = 0
+    landlord_wins_total = 0
     while counter < num:
-        _, _payoffs = env.run(is_training=False)
+        _payoffs, peasant_wins, landlord_wins = env.run_avg(is_training=False)
+        #print("ps:" , peasant_wins)
+        peasant_wins_total+= peasant_wins
+        landlord_wins_total+= landlord_wins
         if isinstance(_payoffs, list):
             for _p in _payoffs:
                 for i, _ in enumerate(payoffs):
@@ -400,5 +405,5 @@ def tournament(env, num):
             counter += 1
     for i, _ in enumerate(payoffs):
         payoffs[i] /= counter
-    return payoffs
-
+    #print(peasant_wins_total, " and ", landlord_wins_total)
+    return payoffs, peasant_wins_total, landlord_wins_total

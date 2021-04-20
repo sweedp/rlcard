@@ -1,5 +1,5 @@
 from rlcard.utils import *
-
+import copy
 class Env(object):
     '''
     The base Env class. For all the environments in RLCard,
@@ -75,14 +75,20 @@ class Env(object):
 
         # Set random seed, default is None
         self._seed(config['seed'])
+        self.landlord_score = False
 
 
+    def set_landlord_score(self, landlord_score=False):
+        self.landlord_score = landlord_score
+        self.game.set_landlord_score(landlord_score)
+        
     def reset(self):
         '''
         Reset environment in single-agent mode
         Call `_init_game` if not in single agent mode
         '''
         if not self.single_agent_mode:
+            # dou dizhu is not single agent!
             return self._init_game()
 
         while True:
@@ -147,6 +153,7 @@ class Env(object):
 
         return state, player_id
 
+
     def set_agents(self, agents):
         '''
         Set the agents that will interact with the environment.
@@ -165,7 +172,146 @@ class Env(object):
                 self.allow_raw_data = True
                 break
 
+    def run_avg(self, is_training=False):
+
+        '''
+        Run a complete game, either for evaluation or training RL agent.
+
+        Args:
+            is_training (boolean): True if for training purpose.
+
+        Returns:
+            (tuple) Tuple containing:
+
+                (list): A list of trajectories generated from the environment.
+                (list): A list payoffs. Each entry corresponds to one player.
+
+        Note: The trajectories are 3-dimension list. The first dimension is for different players.
+              The second dimension is for different transitions. The third dimension is for the contents of each transiton
+        '''
+        if self.single_agent_mode:
+            raise ValueError('Run in single agent not allowed.')
+
+        trajectories = [[] for _ in range(self.player_num)]
+        state, player_id = self.reset()
+
+        #print(self.get_perfect_information())
+
+        landlord_wins = 0
+        peasant_wins = 0
+
+        dqn_payoff = 0
+        random_1_payoff = 0
+        random_2_payoff = 0
+        #print("")
+        #print("Game 1:")
+        #print("")
+
+        #landlord is always 0
+        # player_id is always 0
+        # which agent plays player 0???
+
+
+
+
+        for i in range(1):
+            if(i==1):
+                print("")
+                print("Game 2:")
+                print("")
+                print(self.get_perfect_information())
+                state = copy.deepcopy(save_state)
+                self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
+                player_id = 0
+            if(i==2):
+                print("")
+                print("Game 3:")
+                print("")
+                print(self.get_perfect_information())
+                state = copy.deepcopy(save_state)
+                self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
+                player_id = 0
+
+            # Loop to play the game
+            trajectories[player_id].append(state)
+            while not self.is_over():
+                # Agent plays
+                if not is_training:
+                    action, _ = self.agents[player_id].eval_step(state)
+                else:
+                    action = self.agents[player_id].step(state)
+
+                # Environment steps
+                next_state, next_player_id = self.step(action, self.agents[player_id].use_raw)
+                # Save action
+                trajectories[player_id].append(action)
+
+                # Set the state and player
+                state = next_state
+                player_id = next_player_id
+
+                # Save state.
+                if not self.game.is_over():
+                    trajectories[player_id].append(state)
+
+            # Add a final state to all the players
+            for player_id in range(self.player_num):
+                state = self.get_state(player_id)
+                trajectories[player_id].append(state)
+
+            payoffs = self.get_payoffs()#
+            if(np.sum(payoffs)==2):
+                peasant_wins += 1
+            if(np.sum(payoffs)==1):
+                landlord_wins+=1
+            '''
+            # Payoffs
+
+
+            if(i==0):
+                #print("Run: ", i, " - ", self.agents)
+                dqn_payoff += payoffs[0]
+                random_1_payoff += payoffs[1]
+                random_2_payoff += payoffs[2]
+            if(i==1):
+                #print("Run: ", i, " - ", self.agents)
+                dqn_payoff += payoffs[1]
+                random_1_payoff += payoffs[2]
+                random_2_payoff += payoffs[0]
+            if(i==2):
+                #print("Run: ", i, " - ", self.agents)
+                dqn_payoff += payoffs[2]
+                random_1_payoff += payoffs[0]
+                random_2_payoff += payoffs[1]
+            # set agents back to normal order
+
+            # Reorganize the trajectories
+            #trajectories = reorganize(trajectories, payoffs)
+            #print("trajectories: " ,trajectories)
+            payoffs[0] = dqn_payoff
+            payoffs[1] = random_1_payoff
+            payoffs[2] = random_2_payoff
+            #print("payoffs: " , payoffs)
+        self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
+        #print(self.agents)
+        ## this means they have the same probability to win this game
+
+        if(payoffs[0] == payoffs[1] and payoffs[1]==payoffs[2]):
+            payoffs[0] = 0
+            payoffs[1] = 0
+            payoffs[2] = 0
+        else:
+            print("Payoff is not!!! the same")
+            print(payoff[0], ", ", payoff[1], ", ", payoff[2])
+
+        '''
+        #print("")
+        #print("peasant_wins: ", peasant_wins, " times")
+        #print("landlord_wins: ", landlord_wins, " times")
+        return payoffs, peasant_wins, landlord_wins
+
     def run(self, is_training=False):
+
         '''
         Run a complete game, either for evaluation or training RL agent.
 

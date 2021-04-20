@@ -37,7 +37,11 @@ class DoudizhuGame(object):
         self.allow_step_back = allow_step_back
         self.np_random = np.random.RandomState()
         self.num_players = 3
+        self.landlord_score = False
+    def set_landlord_score(self, landlord_score):
 
+        self.landlord_score = landlord_score
+        
     def init_game(self):
         ''' Initialize players and state.
 
@@ -55,6 +59,7 @@ class DoudizhuGame(object):
 
         # initialize round to deal cards and determine landlord
         self.round = Round(self.np_random)
+        self.round.set_landlord_score(self.landlord_score)
         self.round.initiate(self.players)
 
         # initialize judger

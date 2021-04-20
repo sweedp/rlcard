@@ -23,6 +23,9 @@ class DoudizhuRound(object):
         self.dealer = Dealer(self.np_random)
         self.deck_str = cards2str(self.dealer.deck)
 
+    def set_landlord_score(self, landlord_score):
+        
+        self.dealer.set_landlord_score(landlord_score)
     def initiate(self, players):
         ''' Call dealer to deal cards and bid landlord.
 

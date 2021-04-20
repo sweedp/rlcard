@@ -15,15 +15,17 @@ env = rlcard.make('doudizhu', config={'seed': 0})
 eval_env = rlcard.make('doudizhu', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
-evaluate_every = 1000
-evaluate_num = 1000
-episode_num = 100000
+evaluate_every = 100
+evaluate_num = 100 ## number of games to play in the tournament mode
+episode_num = 1000
+##episode_num = 100000
 
 # The intial memory size
 memory_init_size = 1000
 
 # Train the agent every X steps
-train_every = 64
+train_every = 4
+##train_every = 64
 
 # The paths for saving the logs and learning curves
 log_dir = './experiments/doudizhu_nfsp_result/'
@@ -84,18 +86,27 @@ with tf.Session() as sess:
 
         # Evaluate the performance. Play with random agents.
         if episode % evaluate_every == 0:
-            logger.log_performance(env.timestep, tournament(eval_env, evaluate_num)[0])
+            logger.log_performance(episode, tournament(eval_env, evaluate_num)[0]) # tournament over evaluate_num times, returns avg reward of agent [0]
+            #env.timestep
 
     # Close files in the logger
     logger.close_files()
 
     # Plot the learning curve
     logger.plot('NFSP')
-    
-    # Save model
-    save_dir = 'models/doudizhu_nfsp'
+
+    #save the model
+    nr = 0
+    nr = (str)(nr)
+
+    save_dir = 'models/doudizhu_nfsp_' + nr
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+    else:
+        while(os.path.exists(save_dir)):
+            nr = (int)(nr) + 1
+            nr = (str)(nr)
+            save_dir = 'models/doudizhu_nfsp_' + nr +'/'
+
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))
-    
