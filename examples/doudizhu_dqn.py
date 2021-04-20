@@ -62,7 +62,7 @@ parameter_dict['learning_rate'] = learning_rate
 parameter_dict['landlord_score'] = landlord_score
 
 # change if you use different agent but this same file
-parameter_dict['Agent:'] = 'DDQN Agent'
+parameter_dict['Agent: '] = 'DDQN Agent'
 
 # Set a global seed
 set_global_seed(0)

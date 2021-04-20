@@ -17,16 +17,22 @@ eval_env = rlcard.make('doudizhu', config={'seed': 0})
 # Set the iterations numbers and how frequently we evaluate the performance
 evaluate_every = 100
 evaluate_num = 100
-episode_num = 1000
+episode_num = 20000
 
 # The intial memory size
 memory_init_size = 100
+landlord_score = True
 
-# Train the agent every X steps
-train_every = 1
+parameter_dict = {}
+
+parameter_dict['episode_num'] = episode_num
+parameter_dict['evaluate_every'] = evaluate_every
+parameter_dict['evaluate_num'] = evaluate_num
+parameter_dict['landlord_score'] = landlord_score
+parameter_dict['Agent'] = 'Random Agent'
 
 # The paths for saving the logs and learning curves
-log_dir = './experiments/doudizhu_random_result/'
+
 
 # Set a global seed
 set_global_seed(0)
@@ -44,11 +50,15 @@ with tf.Session() as sess:
     env.set_agents([agent, random_agent, random_agent])
     eval_env.set_agents([random_agent, random_agent, random_agent])
 
+    env.set_landlord_score(landlord_score)
+    eval_env.set_landlord_score(landlord_score)
     # Initialize global variables
     sess.run(tf.global_variables_initializer())
 
     # Init a Logger to plot the learning curve
+    log_dir = './experiments/doudizhu_random_result/'
     logger = Logger(log_dir)
+    logger.log_parameters(parameter_dict)
 
     for episode in range(episode_num):
 
