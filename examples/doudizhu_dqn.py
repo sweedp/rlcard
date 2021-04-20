@@ -10,7 +10,7 @@ from rlcard.agents import RandomAgent
 from rlcard.utils import set_global_seed, tournament
 from rlcard.utils import Logger
 ## error logging
-tf.logging.set_verbosity(tf.logging.ERROR)
+#tf.logging.set_verbosity(tf.logging.ERROR)
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 # Make environment
 env = rlcard.make('doudizhu', config={'seed': 0})
@@ -37,7 +37,7 @@ train_every= 1 # train the agent avery train_every steps
 mlp_layers=[512,512]
 learning_rate=0.00005
 role = 0 # landlord = 0, peasant1 = 1, peasant2 = 2
-role_switching = False
+#role_switching = False
 landlord_score = True ## if landlord score is True, we dont need role_switching
                       ## because the landlord is not always on position 0
 
@@ -90,7 +90,9 @@ with tf.Session() as sess:
 
 
     random_agent = RandomAgent(action_num=eval_env.action_num)
-    agent_list = []
+    agent_list = [agent, random_agent, random_agent] # default
+
+    '''
     if(role_switching or landlord_score):
         agent_list = [agent, random_agent, random_agent]
         parameter_dict['role_switching'] = True
@@ -104,6 +106,7 @@ with tf.Session() as sess:
         elif(role==2):
             agent_list = [random_agent, random_agent, agent]
             parameter_dict['always_peasant_2'] = True
+    '''
     env.set_agents(agent_list)
     eval_env.set_agents(agent_list)
     env.set_landlord_score(landlord_score)
@@ -116,12 +119,12 @@ with tf.Session() as sess:
     logger = Logger(log_dir)
     logger.log_parameters(parameter_dict)
 
-    role_counter = role-1
+    role_counter = role
 
     for episode in range(episode_num):
 
         # Generate data from the environment
-
+        '''
         if(role_switching):
             role_counter +=1
             if(role_counter==3):
@@ -137,7 +140,7 @@ with tf.Session() as sess:
 
             env.set_agents(agent_list)
             eval_env.set_agents(agent_list)
-
+        '''
         trajectories, _ = env.run(is_training=True)
 
         # Feed transitions into agent memory, and train the agent
