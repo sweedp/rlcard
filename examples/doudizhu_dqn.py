@@ -39,7 +39,7 @@ learning_rate=0.00005
 role = 0 # landlord = 0, peasant1 = 1, peasant2 = 2
 #role_switching = False
 landlord_score = True ## if landlord score is True, we dont need role_switching
-                      ## because the landlord is not always on position 0
+                      ## because the landlord is not always on position 0 but according to the position with best handcards score
 
 #options = [role, role_switching, landlord_score] # for evaluation, maybe later for training
 
@@ -61,6 +61,8 @@ parameter_dict['mlp_layers'] = mlp_layers
 parameter_dict['learning_rate'] = learning_rate
 parameter_dict['landlord_score'] = landlord_score
 
+# change if you use different agent but this same file
+parameter_dict['Agent:'] = 'DDQN Agent'
 
 # Set a global seed
 set_global_seed(0)
@@ -92,6 +94,7 @@ with tf.Session() as sess:
     random_agent = RandomAgent(action_num=eval_env.action_num)
     agent_list = [agent, random_agent, random_agent] # default
 
+    #deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
     '''
     if(role_switching or landlord_score):
         agent_list = [agent, random_agent, random_agent]
@@ -107,6 +110,7 @@ with tf.Session() as sess:
             agent_list = [random_agent, random_agent, agent]
             parameter_dict['always_peasant_2'] = True
     '''
+    #set agents in environment
     env.set_agents(agent_list)
     eval_env.set_agents(agent_list)
     env.set_landlord_score(landlord_score)
@@ -123,7 +127,8 @@ with tf.Session() as sess:
 
     for episode in range(episode_num):
 
-        # Generate data from the environment
+
+        #deactivated at the moment, see above
         '''
         if(role_switching):
             role_counter +=1
@@ -141,6 +146,7 @@ with tf.Session() as sess:
             env.set_agents(agent_list)
             eval_env.set_agents(agent_list)
         '''
+        # Generate data from the environment
         trajectories, _ = env.run(is_training=True)
 
         # Feed transitions into agent memory, and train the agent
