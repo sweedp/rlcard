@@ -41,8 +41,7 @@ role_switching = False
 landlord_score = True ## if landlord score is True, we dont need role_switching
                       ## because the landlord is not always on position 0
 
-
-options = [role, role_switching, landlord_score] # for evaluation, maybe later for training
+#options = [role, role_switching, landlord_score] # for evaluation, maybe later for training
 
 parameter_dict['episode_num'] = episode_num
 parameter_dict['evaluate_every'] = evaluate_every
