@@ -16,7 +16,7 @@ eval_env = rlcard.make('doudizhu', config={'seed': 0})
 
 # Set the iterations numbers and how frequently we evaluate the performance
 evaluate_every = 100
-evaluate_num = 100
+evaluate_num = 1000
 episode_num = 20000
 
 # The intial memory size
@@ -83,7 +83,9 @@ with tf.Session() as sess:
     logger.close_files()
 
     # Plot the learning curve
-    logger.plot('Random')
+    logger.plot('Random', 'peasant_wins')
+    logger.plot('Random', 'reward')
+    logger.plot('Random', 'landlord_wins')
 
     # Save model
 
