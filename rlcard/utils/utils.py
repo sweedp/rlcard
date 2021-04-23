@@ -427,6 +427,6 @@ def tournament(env, num):
     if(agent_landlord_times==0):
         agent_landlord_times=1
 
-    print("agent peasasnt wins total: ", agent_peasant_wins_total, " and times peasant: ", agent_peasant_times)
-    print("agent landlord wins total", agent_landlord_wins_total, " and times landlord: ", agent_landlord_times)
+    #print("agent peasasnt wins total: ", agent_peasant_wins_total, " and times peasant: ", agent_peasant_times)
+    #print("agent landlord wins total", agent_landlord_wins_total, " and times landlord: ", agent_landlord_times)
     return payoffs, peasant_wins_total, landlord_wins_total, agent_peasant_wins_total/agent_peasant_times, agent_landlord_wins_total/agent_landlord_times

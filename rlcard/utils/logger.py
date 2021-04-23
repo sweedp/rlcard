@@ -47,6 +47,8 @@ class Logger(object):
         self.csv_agent_p_path = os.path.join(log_dir, ('agent_peasant_perf_' + nr + '.csv'))
         self.fig_agent_p_path = os.path.join(log_dir, ('fig_agent_peasant_wins_' + nr + '.png'))
 
+
+        self.fig_all_path = os.path.join(log_dir, ('fig_all_' + nr + '.png'))
         #parameter file
         self.par_file = open(self.par_path, 'w')
 
@@ -294,6 +296,105 @@ class Logger(object):
             self.csv_agent_p_file.close()
         if self.csv_agent_l_path is not None:
             self.csv_agent_l_file.close()
+
+    def plot_all(self, algorithm_list, plotlist):
+
+        csv_pathes = []
+        save_path = self.fig_all_path
+
+
+        for plots in plotlist:
+
+            if(plots=='agent_peasant_wins'):
+                csv_pathes.append(self.csv_agent_p_path)
+
+            if(plots=='agent_landlord_wins'):
+                csv_pathes.append(self.csv_agent_l_path)
+
+            if(plots=='peasant_wins'):
+                csv_pathes.append(self.csv_p_path)
+
+            if(plots=='landlord_wins'):
+                csv_pathes.append(self.csv_l_path)
+
+            if(plots=='reward'):
+                csv_pathes.append(self.csv_path)
+        plot_figures_one(csv_pathes, save_path, algorithm_list)
+
+
+def plot_figures(csv_pathes, save_path, algorithm_list):
+    ''' Read data from csv files and plot the results
+    '''
+    import matplotlib.pyplot as plt
+
+    fig, axs = plt.subplots(len(csv_pathes), sharex=True, sharey=True)
+
+    for i in range(len(csv_pathes)):
+        csv_path = csv_pathes[i]
+        algorithm = algorithm_list[i]
+
+        print("csv path: ", csv_path)
+        print("algorithm: ", algorithm)
+
+        with open(csv_path) as csvfile:
+            print(csv_path)
+            reader = csv.DictReader(csvfile)
+            xs = []
+            ys = []
+            for row in reader:
+                xs.append(int(row['episode']))
+                ys.append(float(row[algorithm]))
+
+
+            axs[i].plot(xs, ys, label=algorithm)
+            axs[i].set(xlabel='episode', ylabel='reward')
+            axs[i].legend()
+            axs[i].grid()
+
+        save_dir = os.path.dirname(save_path)
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+
+    fig.savefig(save_path)
+
+
+
+def plot_figures_one(csv_pathes, save_path, algorithm_list):
+    ''' Read data from csv files and plot the results
+    '''
+    import matplotlib.pyplot as plt
+
+    fig, ax = plt.subplots()
+
+    for i in range(len(csv_pathes)):
+        csv_path = csv_pathes[i]
+        algorithm = algorithm_list[i]
+
+        print("csv path: ", csv_path)
+        print("algorithm: ", algorithm)
+
+        with open(csv_path) as csvfile:
+            print(csv_path)
+            reader = csv.DictReader(csvfile)
+            xs = []
+            ys = []
+            for row in reader:
+                xs.append(int(row['episode']))
+                ys.append(float(row[algorithm]))
+
+
+            ax.plot(xs, ys, label=algorithm)
+            ax.set(xlabel='episode', ylabel='reward')
+    ax.legend()
+    #ax.grid()
+
+    save_dir = os.path.dirname(save_path)
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    fig.savefig(save_path)
+
+
 
 def plot(csv_path, save_path, algorithm):
     ''' Read data from csv file and plot the results

@@ -270,17 +270,17 @@ class Env(object):
                 role = 'landlord'
                 if(payoffs[self.eval_agent]==1):
                     agent_landlord_wins = 1
-                    print("is landlord and wins")
-                else:
-                    print("is landlord and lose")
+                    #print("is landlord and wins")
+                #else:
+                    #print("is landlord and lose")
             else:
                 role = 'peasant'
                 # if agent is peasant and peasant wins
                 if(payoffs[0]==1):
-                    print("is peasant and wins")
+                    #print("is peasant and wins")
                     agent_peasant_wins = 1
-                else:
-                    print("is peasant and lose")
+                #else:
+                    #print("is peasant and lose")
         return payoffs, peasant_wins, landlord_wins, agent_peasant_wins, agent_landlord_wins, role
 
     def run(self, is_training=False):
