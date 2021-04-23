@@ -389,11 +389,26 @@ def tournament(env, num):
     counter = 0
     peasant_wins_total = 0
     landlord_wins_total = 0
+    agent_peasant_wins_total = 0
+    agent_landlord_wins_total = 0
+    agent_landlord_times = 0
+    agent_peasant_times = 0
+
     while counter < num:
-        _payoffs, peasant_wins, landlord_wins = env.run_avg(is_training=False)
+        _payoffs, peasant_wins, landlord_wins, agent_peasant_wins, agent_landlord_wins, role = env.run_avg(is_training=False)
+
+        if(role=='peasant'):
+            agent_peasant_times +=1
+        elif(role=='landlord'):
+            agent_landlord_times +=1
+        else:
+            print("should have some role")
         #print("ps:" , peasant_wins)
         peasant_wins_total+= peasant_wins
         landlord_wins_total+= landlord_wins
+
+        agent_peasant_wins_total += agent_peasant_wins
+        agent_landlord_wins_total += agent_landlord_wins
         if isinstance(_payoffs, list):
             for _p in _payoffs:
                 for i, _ in enumerate(payoffs):
@@ -405,5 +420,13 @@ def tournament(env, num):
             counter += 1
     for i, _ in enumerate(payoffs):
         payoffs[i] /= counter
-    #print(peasant_wins_total, " and ", landlord_wins_total)
-    return payoffs, peasant_wins_total, landlord_wins_total
+
+    # in case we are always peasant or landlord:
+    if(agent_peasant_times==0):
+        agent_peasant_times = 1
+    if(agent_landlord_times==0):
+        agent_landlord_times=1
+
+    print("agent peasasnt wins total: ", agent_peasant_wins_total, " and times peasant: ", agent_peasant_times)
+    print("agent landlord wins total", agent_landlord_wins_total, " and times landlord: ", agent_landlord_times)
+    return payoffs, peasant_wins_total, landlord_wins_total, agent_peasant_wins_total/agent_peasant_times, agent_landlord_wins_total/agent_landlord_times

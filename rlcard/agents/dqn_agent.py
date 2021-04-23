@@ -24,11 +24,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 '''
 
+
 import random
 import numpy as np
 import tensorflow as tf
 from collections import namedtuple
-
+from rlcard.utils import Logger
 from rlcard.utils.utils import remove_illegal
 
 Transition = namedtuple('Transition', ['state', 'action', 'reward', 'next_state', 'done'])
@@ -106,6 +107,15 @@ class DQNAgent(object):
         # Create replay memory
         self.memory = Memory(replay_memory_size, batch_size)
 
+        ## save the losses
+        self.losses = []
+        self.loss = 0
+
+    def get_losses(self):
+        return self.losses
+
+    def get_loss(self):
+        return self.loss
     def feed(self, ts):
         ''' Store data in to replay buffer and train the agent. There are two stages.
             In stage 1, populate the memory without training
@@ -184,6 +194,10 @@ class DQNAgent(object):
         state_batch = np.array(state_batch)
         loss = self.q_estimator.update(self.sess, state_batch, action_batch, target_batch)
         print('\rINFO - Agent {}, step {}, rl-loss: {}'.format(self.scope, self.total_t, loss), end='')
+
+        #logging loss:
+        self.losses.append(loss)
+        self.loss = loss
 
 
         # Update the target estimator

@@ -19,9 +19,9 @@ eval_env = rlcard.make('doudizhu', config={'seed': 0})
 ## save parameters in dictionary
 parameter_dict = {}
 # Set the iterations numbers and how frequently we evaluate the performance
-episode_num = 20000
+episode_num = 1000
 evaluate_every = 100
-evaluate_num = 100
+evaluate_num = 10
 
 
 ## parameters for DQN agent
@@ -36,12 +36,9 @@ batch_size=32
 train_every= 1 # train the agent avery train_every steps
 mlp_layers=[512,512]
 learning_rate=0.00005
-role = 0 # landlord = 0, peasant1 = 1, peasant2 = 2
-#role_switching = False
-landlord_score = True ## if landlord score is True, we dont need role_switching
+role = 0 # landlord = 0, peasant1 = 1, peasant2 = 2 - only counts if landlord_score = False
+landlord_score = False ## if landlord score is True, we dont need role_switching
                       ## because the landlord is not always on position 0 but according to the position with best handcards score
-
-#options = [role, role_switching, landlord_score] # for evaluation, maybe later for training
 
 parameter_dict['episode_num'] = episode_num
 parameter_dict['evaluate_every'] = evaluate_every
@@ -60,7 +57,13 @@ parameter_dict['train_every'] =  train_every
 parameter_dict['mlp_layers'] = mlp_layers
 parameter_dict['learning_rate'] = learning_rate
 parameter_dict['landlord_score'] = landlord_score
-
+if(landlord_score==False):
+    if(role==0):
+        parameter_dict['always_landlord'] = True
+    if(role==1):
+        parameter_dict['always_peasant_1'] = True
+    if(role==2):
+        parameter_dict['always_peasant_2'] = True
 # change if you use different agent but this same file
 parameter_dict['Agent: '] = 'DDQN Agent'
 
@@ -95,10 +98,9 @@ with tf.Session() as sess:
     agent_list = [agent, random_agent, random_agent] # default
 
     #deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
-    '''
-    if(role_switching or landlord_score):
+
+    if(landlord_score):
         agent_list = [agent, random_agent, random_agent]
-        parameter_dict['role_switching'] = True
     else:
         if(role==0):
             agent_list = [agent, random_agent, random_agent]
@@ -109,12 +111,13 @@ with tf.Session() as sess:
         elif(role==2):
             agent_list = [random_agent, random_agent, agent]
             parameter_dict['always_peasant_2'] = True
-    '''
+
     #set agents in environment
     env.set_agents(agent_list)
     eval_env.set_agents(agent_list)
     env.set_landlord_score(landlord_score)
     eval_env.set_landlord_score(landlord_score)
+    eval_env.set_eval_agent(role)
     # Initialize global variables
     sess.run(tf.global_variables_initializer())
 
@@ -127,25 +130,6 @@ with tf.Session() as sess:
 
     for episode in range(episode_num):
 
-
-        #deactivated at the moment, see above
-        '''
-        if(role_switching):
-            role_counter +=1
-            if(role_counter==3):
-                role_counter=0
-            if(role_counter==0):
-                agent_list = [agent, random_agent, random_agent]
-
-            elif(role_counter==1):
-                agent_list = [random_agent, agent, random_agent]
-
-            elif(role_counter==2):
-                agent_list = [random_agent, random_agent, agent]
-
-            env.set_agents(agent_list)
-            eval_env.set_agents(agent_list)
-        '''
         # Generate data from the environment
         trajectories, _ = env.run(is_training=True)
 
@@ -155,23 +139,28 @@ with tf.Session() as sess:
 
         # Evaluate the performance. Play with random agents.
         if episode % evaluate_every == 0:
-            payoffs, peasant_wins, landlord_wins = tournament(eval_env, evaluate_num)
+            ##payoffs, peasant_wins, landlord_wins = tournament(eval_env, evaluate_num)
+            ## new with loss:
+            payoffs, peasant_wins, landlord_wins, agent_peasant_wins, agent_landlord_wins = tournament(eval_env, evaluate_num)
             logger.log_performance(episode, payoffs[role_counter])
             #print("DQN: ", peasant_wins, " and ", landlord_wins)
             logger.log_peasants(episode, peasant_wins/evaluate_num)
             logger.log_landlord(episode, landlord_wins/evaluate_num)
-
-
+            logger.log_loss(episode, agent.get_loss())
+            logger.log_agent_peasant(episode, agent_peasant_wins)
+            logger.log_agent_landlord(episode, agent_landlord_wins)
 
 
     # Close files in the logger
     logger.close_files()
 
     # Plot the learning curve
-    logger.plot('DQN', 'peasant_wins')
-    logger.plot('DQN', 'reward')
-    logger.plot('DQN', 'landlord_wins')
-
+    logger.plot('DDQN', 'peasant_wins')
+    logger.plot('DDQN', 'reward')
+    logger.plot('DDQN', 'landlord_wins')
+    logger.plot('DDQN', 'loss')
+    logger.plot('DDQN', 'agent_peasant_wins')
+    logger.plot('DDQN', 'agent_landlord_wins')
     # save the model
 
     nr = 0

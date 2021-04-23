@@ -76,12 +76,15 @@ class Env(object):
         # Set random seed, default is None
         self._seed(config['seed'])
         self.landlord_score = False
+        self.eval_agent = -1
 
+    def set_eval_agent(self, eval_agent):
+        self.eval_agent = eval_agent
 
     def set_landlord_score(self, landlord_score=False):
         self.landlord_score = landlord_score
         self.game.set_landlord_score(landlord_score)
-        
+
     def reset(self):
         '''
         Reset environment in single-agent mode
@@ -203,34 +206,9 @@ class Env(object):
         dqn_payoff = 0
         random_1_payoff = 0
         random_2_payoff = 0
-        #print("")
-        #print("Game 1:")
-        #print("")
-
-        #landlord is always 0
-        # player_id is always 0
-        # which agent plays player 0???
-
-
 
 
         for i in range(1):
-            if(i==1):
-                print("")
-                print("Game 2:")
-                print("")
-                print(self.get_perfect_information())
-                state = copy.deepcopy(save_state)
-                self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
-                player_id = 0
-            if(i==2):
-                print("")
-                print("Game 3:")
-                print("")
-                print(self.get_perfect_information())
-                state = copy.deepcopy(save_state)
-                self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
-                player_id = 0
 
             # Loop to play the game
             trajectories[player_id].append(state)
@@ -264,51 +242,46 @@ class Env(object):
                 peasant_wins += 1
             if(np.sum(payoffs)==1):
                 landlord_wins+=1
-            '''
-            # Payoffs
 
-
-            if(i==0):
-                #print("Run: ", i, " - ", self.agents)
-                dqn_payoff += payoffs[0]
-                random_1_payoff += payoffs[1]
-                random_2_payoff += payoffs[2]
-            if(i==1):
-                #print("Run: ", i, " - ", self.agents)
-                dqn_payoff += payoffs[1]
-                random_1_payoff += payoffs[2]
-                random_2_payoff += payoffs[0]
-            if(i==2):
-                #print("Run: ", i, " - ", self.agents)
-                dqn_payoff += payoffs[2]
-                random_1_payoff += payoffs[0]
-                random_2_payoff += payoffs[1]
-            # set agents back to normal order
-
-            # Reorganize the trajectories
-            #trajectories = reorganize(trajectories, payoffs)
-            #print("trajectories: " ,trajectories)
-            payoffs[0] = dqn_payoff
-            payoffs[1] = random_1_payoff
-            payoffs[2] = random_2_payoff
-            #print("payoffs: " , payoffs)
-        self.set_agents([self.agents[2], self.agents[0], self.agents[1]])
-        #print(self.agents)
-        ## this means they have the same probability to win this game
-
-        if(payoffs[0] == payoffs[1] and payoffs[1]==payoffs[2]):
-            payoffs[0] = 0
-            payoffs[1] = 0
-            payoffs[2] = 0
-        else:
-            print("Payoff is not!!! the same")
-            print(payoff[0], ", ", payoff[1], ", ", payoff[2])
-
-        '''
         #print("")
         #print("peasant_wins: ", peasant_wins, " times")
         #print("landlord_wins: ", landlord_wins, " times")
-        return payoffs, peasant_wins, landlord_wins
+        agent_peasant_wins = 0
+        agent_landlord_wins = 0
+        role = 0
+        if(self.landlord_score==False):
+            if(self.eval_agent==0):
+                role = 'landlord'
+                if(payoffs[0]==1):
+                    agent_landlord_wins=1
+
+            elif(self.eval_agent==1 or self.eval_agent==2):
+                role = 'peasant'
+                if(payoffs[1]==1):
+                    agent_peasant_wins = 1
+        else:
+            #if self.landlord_score = True
+            # need to get landlord player number!!
+            landlord_player = self.game.round.dealer.get_landlord_agent()
+
+            #agent is landlord
+            if(self.eval_agent==landlord_player):
+                # if landlord/agent wins
+                role = 'landlord'
+                if(payoffs[self.eval_agent]==1):
+                    agent_landlord_wins = 1
+                    print("is landlord and wins")
+                else:
+                    print("is landlord and lose")
+            else:
+                role = 'peasant'
+                # if agent is peasant and peasant wins
+                if(payoffs[0]==1):
+                    print("is peasant and wins")
+                    agent_peasant_wins = 1
+                else:
+                    print("is peasant and lose")
+        return payoffs, peasant_wins, landlord_wins, agent_peasant_wins, agent_landlord_wins, role
 
     def run(self, is_training=False):
 

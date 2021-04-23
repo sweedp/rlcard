@@ -23,7 +23,10 @@ class DoudizhuDealer(object):
         self.deck.sort(key=functools.cmp_to_key(doudizhu_sort_card))
         self.landlord = None
         self.landlord_score = False
+        self.landlord_agent = -1
 
+    def get_landlord_agent(self):
+        return self.landlord_agent
 
     def set_landlord_score(self, landlord_score):
         self.landlord_score = landlord_score
@@ -64,12 +67,14 @@ class DoudizhuDealer(object):
         players[2].role = 'peasant'
         #players[0].role = 'peasant'
         #self.landlord = players[0]
-
+        self.landlord_agent = 0
         ## determine 'landlord'
         if(self.landlord_score==True):
 
             max_score = self.get_landlord_score(
                 cards2str(self.landlord.current_hand))
+
+            counter = 1
             for player in players[1:]:
                 player.role = 'peasant'
                 score = self.get_landlord_score(
@@ -77,6 +82,13 @@ class DoudizhuDealer(object):
                 if score > max_score:
                     max_score = score
                     self.landlord = player
+                    if(counter==1):
+
+                        self.landlord_agent = 1
+                    if(counter==2):
+                        self.landlord_agent = 2
+                counter += 1
+
             self.landlord.role = 'landlord'
 
         # give the 'landlord' the  three cards
@@ -96,7 +108,7 @@ class DoudizhuDealer(object):
         Returns:
             int: score
         '''
-        
+
         score_map = {'A': 1, '2': 2, 'B': 3, 'R': 4}
         score = 0
         # rocket
