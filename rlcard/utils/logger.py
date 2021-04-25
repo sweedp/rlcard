@@ -14,6 +14,7 @@ class Logger(object):
 
         nr = 0
         nr = (str)(nr)
+        self.log_dir = log_dir
 
         if not os.path.exists(log_dir):
             os.makedirs(log_dir)
@@ -296,6 +297,8 @@ class Logger(object):
             self.csv_agent_p_file.close()
         if self.csv_agent_l_path is not None:
             self.csv_agent_l_file.close()
+        if self.par_path is not None:
+            self.par_file.close()
 
     def plot_all(self, algorithm_list, plotlist):
 
