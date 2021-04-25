@@ -350,7 +350,7 @@ def plot_figures(csv_pathes, save_path, algorithm_list):
 
 
             axs[i].plot(xs, ys, label=algorithm)
-            axs[i].set(xlabel='episode', ylabel='reward')
+            axs[i].set(xlabel='games', ylabel='reward')
             axs[i].legend()
             axs[i].grid()
 
@@ -387,7 +387,7 @@ def plot_figures_one(csv_pathes, save_path, algorithm_list):
 
 
             ax.plot(xs, ys, label=algorithm)
-            ax.set(xlabel='episode', ylabel='reward')
+            ax.set(xlabel='games', ylabel='reward')
     ax.legend()
     #ax.grid()
 
@@ -413,7 +413,7 @@ def plot(csv_path, save_path, algorithm):
             ys.append(float(row['reward']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='reward')
+        ax.set(xlabel='games', ylabel='reward')
         ax.legend()
         ax.grid()
 
@@ -437,7 +437,7 @@ def plot_p(csv_path, save_path, algorithm):
             ys.append(float(row['peasant_wins']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='peasant_wins')
+        ax.set(xlabel='games', ylabel='peasant_wins')
         ax.legend()
         ax.grid()
 
@@ -461,7 +461,7 @@ def plot_l(csv_path, save_path, algorithm):
             ys.append(float(row['landlord_wins']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='landlord_wins')
+        ax.set(xlabel='games', ylabel='landlord_wins')
         ax.legend()
         ax.grid()
 
@@ -485,7 +485,7 @@ def plot_loss(csv_path, save_path, algorithm):
             ys.append(float(row['loss']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='loss')
+        ax.set(xlabel='games', ylabel='loss')
         ax.legend()
         ax.grid()
 
@@ -509,7 +509,7 @@ def plot_agent_l(csv_path, save_path, algorithm):
             ys.append(float(row['agent_landlord_wins']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='agent_landlord_wins')
+        ax.set(xlabel='games', ylabel='agent_landlord_wins')
         ax.legend()
         ax.grid()
 
@@ -533,7 +533,7 @@ def plot_agent_p(csv_path, save_path, algorithm):
             ys.append(float(row['agent_peasant_wins']))
         fig, ax = plt.subplots()
         ax.plot(xs, ys, label=algorithm)
-        ax.set(xlabel='episode', ylabel='agent_peasant_wins')
+        ax.set(xlabel='games', ylabel='agent_peasant_wins')
         ax.legend()
         ax.grid()
 

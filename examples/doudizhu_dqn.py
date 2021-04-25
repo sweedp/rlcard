@@ -19,9 +19,9 @@ eval_env = rlcard.make('doudizhu', config={'seed': 0})
 ## save parameters in dictionary
 parameter_dict = {}
 # Set the iterations numbers and how frequently we evaluate the performance
-episode_num = 1000
-evaluate_every = 100
-evaluate_num = 10
+episode_num = 40000
+evaluate_every = 1000
+evaluate_num = 1000
 
 
 ## parameters for DQN agent
@@ -37,7 +37,7 @@ train_every= 1 # train the agent avery train_every steps
 mlp_layers=[512,512]
 learning_rate=0.00005
 role = 0 # landlord = 0, peasant1 = 1, peasant2 = 2 - only counts if landlord_score = False
-landlord_score = False ## if landlord score is True, we dont need role_switching
+landlord_score = True ## if landlord score is True, we dont need role_switching
                       ## because the landlord is not always on position 0 but according to the position with best handcards score
 
 parameter_dict['episode_num'] = episode_num
@@ -161,6 +161,13 @@ with tf.Session() as sess:
     logger.plot('DDQN', 'loss')
     logger.plot('DDQN', 'agent_peasant_wins')
     logger.plot('DDQN', 'agent_landlord_wins')
+
+    #algorithm_list = ['peasant_wins', 'reward', 'landlord_wins', 'agent_landlord_wins', 'agent_peasant_wins']
+    #plotlist = ['peasant_wins', 'reward', 'landlord_wins','agent_landlord_wins', 'agent_peasant_wins']
+    algorithm_list = ['reward', 'agent_landlord_wins', 'agent_peasant_wins']
+    plotlist = ['reward', 'agent_landlord_wins', 'agent_peasant_wins']
+
+    logger.plot_all(algorithm_list, plotlist)
     # save the model
 
     nr = 0
