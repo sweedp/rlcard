@@ -1,0 +1,18 @@
+--------------------
+   episode_num  |  30000
+   evaluate_every  |  1000
+   evaluate_num  |  1000
+   DQN Agent Parameters  |  see below:
+   replay_memory_size  |  20000
+   memory_init_size  |  1000
+   train_every  |  1
+   update_target_estimator_every  |  1000
+   discount_factor  |  0.99
+   epsilon_start  |  1.0
+   epsilon_end  |  0.1
+   epsilon_decay_steps  |  20000
+   batch_size  |  32
+   mlp_layers  |  [512, 512]
+   learning_rate  |  5e-05
+   landlord_score  |  True
+   Agent:   |  Random Agent
