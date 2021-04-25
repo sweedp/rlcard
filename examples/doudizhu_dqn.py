@@ -122,7 +122,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     # Init a Logger to plot the learning curve
-    log_dir = './experiments/doudizhu_dqn_result/'
+    log_dir = './experiments/doudizhu_ddqn_result/'
     logger = Logger(log_dir)
     logger.log_parameters(parameter_dict)
 
@@ -173,14 +173,14 @@ with tf.Session() as sess:
     nr = 0
     nr = (str)(nr)
 
-    save_dir = 'models/doudizhu_dqn_' + nr
+    save_dir = 'models/doudizhu_ddqn_' + nr
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     else:
         while(os.path.exists(save_dir)):
             nr = (int)(nr) + 1
             nr = (str)(nr)
-            save_dir = 'models/doudizhu_dqn_' + nr +'/'
+            save_dir = 'models/doudizhu_ddqn_' + nr +'/'
 
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))
