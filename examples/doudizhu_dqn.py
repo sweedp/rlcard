@@ -19,7 +19,7 @@ eval_env = rlcard.make('doudizhu', config={'seed': 0})
 ## save parameters in dictionary
 parameter_dict = {}
 # Set the iterations numbers and how frequently we evaluate the performance
-episode_num = 40000
+episode_num = 30000
 evaluate_every = 1000
 evaluate_num = 1000
 
