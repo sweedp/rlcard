@@ -65,7 +65,7 @@ if(landlord_score==False):
     if(role==2):
         parameter_dict['always_peasant_2'] = True
 # change if you use different agent but this same file
-parameter_dict['Agent: '] = 'DDQN Agent'
+parameter_dict['Agent: '] = 'Random Agent'
 
 # Set a global seed
 set_global_seed(0)
@@ -95,12 +95,12 @@ with tf.Session() as sess:
 
 
     random_agent = RandomAgent(action_num=eval_env.action_num)
-    agent_list = [agent, random_agent, random_agent] # default
+    agent_list = [random_agent, random_agent, random_agent] # default
 
     #deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
 
     if(landlord_score):
-        agent_list = [agent, random_agent, random_agent]
+        agent_list = [random_agent, random_agent, random_agent]
     else:
         if(role==0):
             agent_list = [agent, random_agent, random_agent]
@@ -122,7 +122,7 @@ with tf.Session() as sess:
     sess.run(tf.global_variables_initializer())
 
     # Init a Logger to plot the learning curve
-    log_dir = './experiments/doudizhu_ddqn_result/'
+    log_dir = './experiments/doudizhu_random_agent_result/'
     logger = Logger(log_dir)
     logger.log_parameters(parameter_dict)
 
@@ -173,14 +173,14 @@ with tf.Session() as sess:
     nr = 0
     nr = (str)(nr)
 
-    save_dir = 'models/doudizhu_ddqn_' + nr
+    save_dir = 'models/doudizhu_random_' + nr
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     else:
         while(os.path.exists(save_dir)):
             nr = (int)(nr) + 1
             nr = (str)(nr)
-            save_dir = 'models/doudizhu_ddqn_' + nr +'/'
+            save_dir = 'models/doudizhu_random_' + nr +'/'
 
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))
