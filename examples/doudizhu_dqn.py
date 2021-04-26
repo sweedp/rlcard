@@ -95,12 +95,12 @@ with tf.Session() as sess:
 
 
     random_agent = RandomAgent(action_num=eval_env.action_num)
-    agent_list = [random_agent, random_agent, random_agent] # default
+    agent_list = [agent, random_agent, random_agent] # default
 
     #deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
 
     if(landlord_score):
-        agent_list = [random_agent, random_agent, random_agent]
+        agent_list = [agent, random_agent, random_agent]
     else:
         if(role==0):
             agent_list = [agent, random_agent, random_agent]
