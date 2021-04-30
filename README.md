@@ -25,7 +25,7 @@ Run the script from this directory by calling
 
 ### Environment
 
-RLCard needs Python=<3.7 and Tensorflow 1.
+RLCard needs Python=<3.7 and Tensorflow 1.15.
 
 We set up an environment yml for Windows and MacOS.
 If they do not work, please set up an environment that includes the following:
