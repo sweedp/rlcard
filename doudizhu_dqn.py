@@ -5,7 +5,10 @@ import tensorflow as tf
 import os
 
 import rlcard
+# uncomment the agent you want to train
 from dqn_agent import DQNAgent
+#from ddqn_agent import DDQNAgent
+#from dueling_ddqn_agent import DuelingDDQNAgent
 from rlcard.agents import RandomAgent
 from rlcard.utils import set_global_seed, tournament
 from rlcard.utils import Logger
@@ -77,6 +80,7 @@ with tf.Session() as sess:
     global_step = tf.Variable(0, name='global_step', trainable=False)
 
     # Set up the agents
+    # as DQNAgent, DDQNAgent, or DuelingDDQNAgent
     agent = DQNAgent(sess,
                      scope='dqn',
                      replay_memory_size=replay_memory_size,
@@ -94,10 +98,11 @@ with tf.Session() as sess:
                      learning_rate=learning_rate)
 
 
+    # load random agent
     random_agent = RandomAgent(action_num=eval_env.action_num)
     agent_list = [agent, random_agent, random_agent] # default
 
-    #deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
+    # deactivated at the moment because we might not need it if we use landlord score anyway for switching positions/roles
     '''
     if(landlord_score):
         agent_list = [random_agent, random_agent, random_agent]
@@ -112,7 +117,7 @@ with tf.Session() as sess:
             agent_list = [random_agent, random_agent, agent]
             parameter_dict['always_peasant_2'] = True
     '''
-    #set agents in environment
+    # set agents in environment
     env.set_agents(agent_list)
     eval_env.set_agents(agent_list)
     env.set_landlord_score(landlord_score)
