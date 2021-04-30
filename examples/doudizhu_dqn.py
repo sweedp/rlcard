@@ -173,14 +173,14 @@ with tf.Session() as sess:
     nr = 0
     nr = (str)(nr)
 
-    save_dir = 'models/doudizhu_random_' + nr
+    save_dir = 'models/doudizhu_dqn_' + nr
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     else:
         while(os.path.exists(save_dir)):
             nr = (int)(nr) + 1
             nr = (str)(nr)
-            save_dir = 'models/doudizhu_random_' + nr +'/'
+            save_dir = 'models/doudizhu_dqn_' + nr +'/'
 
     saver = tf.train.Saver()
     saver.save(sess, os.path.join(save_dir, 'model'))

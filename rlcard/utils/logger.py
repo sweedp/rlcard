@@ -362,9 +362,12 @@ def plot_figures(csv_pathes, save_path, algorithm_list):
 
 
 
-def plot_figures_one(csv_pathes, save_path, algorithm_list):
+def plot_figures_one(csv_pathes, save_path, algorithm_list, what_plot):
     ''' Read data from csv files and plot the results
     '''
+
+
+
     import matplotlib.pyplot as plt
 
     fig, ax = plt.subplots()
@@ -376,6 +379,9 @@ def plot_figures_one(csv_pathes, save_path, algorithm_list):
         print("csv path: ", csv_path)
         print("algorithm: ", algorithm)
 
+
+
+
         with open(csv_path) as csvfile:
             print(csv_path)
             reader = csv.DictReader(csvfile)
@@ -383,7 +389,7 @@ def plot_figures_one(csv_pathes, save_path, algorithm_list):
             ys = []
             for row in reader:
                 xs.append(int(row['episode']))
-                ys.append(float(row[algorithm]))
+                ys.append(float(row[what_plot]))
 
 
             ax.plot(xs, ys, label=algorithm)
